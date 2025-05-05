@@ -136,3 +136,8 @@ images/
 *.tmp
 *.bak
 *.swp
+
+# Files dirs
+
+files/input/*
+files/output/*

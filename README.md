@@ -11,21 +11,8 @@ A powerful tool for converting Microsoft Word documents with complex mathematica
   - [Overview](#overview)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-    - [Using uv (Development Mode)](#using-uv-development-mode)
-    - [User Installation (Recommended)](#user-installation-recommended)
-    - [System-wide Installation](#system-wide-installation)
-  - [Usage](#usage)
-    - [Basic Conversion](#basic-conversion)
-    - [Batch Conversion](#batch-conversion)
-    - [Fixing LaTeX Delimiters](#fixing-latex-delimiters)
-    - [Validating Output](#validating-output)
-    - [Use Cases](#use-cases)
-  - [Examples](#examples)
-  - [Advanced Usage](#advanced-usage)
-    - [Custom Configuration](#custom-configuration)
-    - [Processing Pipeline Customization](#processing-pipeline-customization)
-  - [Tests and Development Tools](#tests-and-development-tools)
+  - [Get Started](#get-started)
+    - [Using the Makefile](#using-the-makefile)
   - [Troubleshooting](#troubleshooting)
     - [Common Issues](#common-issues)
     - [Logging](#logging)
@@ -55,153 +42,57 @@ This tool bridges the gap between Word documents and the Markdown+LaTeX workflow
 - Pandoc (for Word document conversion)
 - Microsoft Word documents with equations created using the built-in equation editor
 
-## Installation
+## Get Started
 
-### Using uv (Development Mode)
+You can use MS2MD directly from the cloned repository.
+
+This approach is useful for quick testing.
 
 ```bash
 # Clone the repository
-git clone https://github.com/ucli-tools/ms2md.git
+git clone https://github.com/yourusername/ms2md.git
 cd ms2md
 
-# Set up a virtual environment and install dependencies
+# Create input and output directories
+mkdir -p files/input files/output
+
+# Copy your Word documents to the input directory
+cp /path/to/your/chapter1.docx files/input/
+cp /path/to/your/chapter2.docx files/input/
+# ... and so on for other chapters
+
+# Set up a virtual environment and install the package
 uv venv
-uv pip install -e .
+uv pip install -e .  # Install the package in development mode with all dependencies
+
+# Activate the virtual environment
+# For bash/zsh:
+#source .venv/bin/activate
+# For fish shell:
+source .venv/bin/activate.fish
+
+# Run the batch conversion
+python3 -m ms2md batch ./files/input ./files/output
 ```
 
-### User Installation (Recommended)
+> **Note**: If you encounter an error about missing modules, make sure to install the package with `-e .` instead of `-r requirements.txt` to ensure all dependencies are correctly installed.
+
+### Using the Makefile
+
+You can also use the provided Makefile to simplify the process:
 
 ```bash
-# Clone the repository
-git clone https://github.com/ucli-tools/ms2md.git
-cd ms2md
+# For bash/zsh shell
+make local-run
 
-# Install for the current user
-make install-user
-# Or directly: pip install --user .
+# For fish shell
+make local-run-fish
 ```
 
-### System-wide Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/ucli-tools/ms2md.git
-cd ms2md
-
-# Install system-wide (may require sudo)
-make install-system
-# Or directly: sudo pip install .
-```
-
-> **Note**: After installation, make sure the installation directory is in your PATH. You may need to restart your terminal for the `ms2md` command to be available.
-
-## Usage
-
-### Basic Conversion
-
-Convert a single Word document to Markdown:
-
-```bash
-ms2md convert document.docx
-```
-
-Specify an output file:
-
-```bash
-ms2md convert document.docx output.md
-```
-
-### Batch Conversion
-
-Convert all Word documents in a directory:
-
-```bash
-ms2md batch input_directory/ output_directory/
-```
-
-### Fixing LaTeX Delimiters
-
-Standardize LaTeX delimiters in a Markdown file:
-
-```bash
-ms2md fix-delimiters document.md
-```
-
-### Validating Output
-
-Check if a Markdown file has valid LaTeX equations:
-
-```bash
-ms2md validate document.md
-```
-
-### Use Cases
-
-For detailed usage scenarios and workflows, see [Use Cases](docs/usecase.md).
-
-## Examples
-
-The `examples/` directory contains sample Word documents and their converted Markdown outputs:
-
-- `simple.docx` - Basic document with minimal equations
-- `math_heavy.docx` - Document with complex mathematical content
-- `batch_convert.py` - Example script for batch processing
-
-## Advanced Usage
-
-### Custom Configuration
-
-Create a configuration file to customize the conversion process:
-
-```yaml
-# config.yaml
-equations:
-  inline_delimiters: ["$", "$"]
-  display_delimiters: ["$$", "$$"]
-  
-images:
-  extract_path: "./images"
-  
-tables:
-  format: "pipe"  # Options: pipe, grid, simple
-```
-
-Use the configuration file:
-
-```bash
-ms2md convert --config config.yaml document.docx
-```
-
-### Processing Pipeline Customization
-
-You can extend the processing pipeline by creating custom processors:
-
-```python
-from ms2md.processors.base import BaseProcessor
-
-class MyCustomProcessor(BaseProcessor):
-    def process(self, content):
-        # Custom processing logic
-        return modified_content
-```
-
-## Tests and Development Tools
-
-The repository includes a comprehensive test suite and development tools:
-
-```
-# Set up development environment
-make setup
-
-# Run tests
-make test
-
-# Format code
-make format
-
-# Run linters
-make lint
-```
+This will:
+1. Set up a virtual environment
+2. Install the package with all dependencies
+3. Run the batch conversion on files in ./files/input and output to ./files/output
 
 ## Troubleshooting
 
@@ -216,7 +107,7 @@ make lint
 Enable detailed logging for troubleshooting:
 
 ```bash
-ms2md convert --log-level debug document.docx
+python3 -m ms2md convert --log-level debug document.docx
 ```
 
 ## Contributing

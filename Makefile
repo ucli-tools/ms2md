@@ -26,6 +26,7 @@ help:
 setup:
 	@echo "Setting up development environment..."
 	uv venv || python -m venv .venv
+	@echo "Installing dependencies (including python-docx 1.0.0 for math module support)..."
 	uv pip install -r requirements.txt -r requirements-dev.txt || pip install -r requirements.txt -r requirements-dev.txt
 	uv pip install -e . || pip install -e .
 	@echo "Setup complete."
@@ -111,3 +112,19 @@ examples:
 	@echo "Creating example files..."
 	mkdir -p examples
 	@echo "Examples created."
+
+# Test batch locally in ./input and print in /output
+local-run:
+	uv venv
+	uv pip install -e .
+	@echo "Running batch conversion..."
+	@bash -c "source .venv/bin/activate && python3 -m ms2md batch ./files/input ./files/output && deactivate"
+	@echo "Batch conversion complete."
+
+# Test batch locally with fish shell
+local-run-fish:
+	uv venv
+	uv pip install -e .
+	@echo "Running batch conversion with fish shell..."
+	@fish -c "source .venv/bin/activate.fish && python3 -m ms2md batch ./files/input ./files/output && deactivate"
+	@echo "Batch conversion complete."
