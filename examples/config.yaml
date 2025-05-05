@@ -1,0 +1,53 @@
+# MS2MD Configuration Example
+
+# Equation settings
+equations:
+  # Delimiters for inline equations
+  inline_delimiters: ["$", "$"]
+  
+  # Delimiters for display equations
+  display_delimiters: ["$$", "$$"]
+  
+  # Whether to use Pandoc's MathML conversion
+  use_pandoc_mathml: true
+
+# Image settings
+images:
+  # Path to extract images to (relative to output file)
+  extract_path: "./images"
+  
+  # Whether to optimize images
+  optimize: true
+  
+  # Maximum dimensions for images
+  max_width: 800
+  max_height: 600
+
+# Table settings
+tables:
+  # Table format (pipe, grid, simple)
+  format: "pipe"
+  
+  # Header style (bold, none)
+  header_style: "bold"
+
+# Pandoc settings
+pandoc:
+  # Additional arguments to pass to Pandoc
+  extra_args:
+    - "--wrap=none"
+    - "--standalone"
+
+# Processing settings
+processing:
+  # Whether to fix LaTeX delimiters
+  fix_delimiters: true
+  
+  # Whether to extract and process images
+  extract_images: true
+  
+  # Whether to process tables
+  process_tables: true
+  
+  # Whether to process cross-references
+  process_references: true
