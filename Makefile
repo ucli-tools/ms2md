@@ -1,7 +1,7 @@
 # MS2MD Makefile
 # Provides commands for development, testing, and installation
 
-.PHONY: setup test lint format clean build install uninstall all help
+.PHONY: setup test lint format clean build install install-dev install-user install-system uninstall all help
 
 # Default target
 all: setup lint test
@@ -73,8 +73,32 @@ build: clean
 # Install package
 install:
 	@echo "Installing package..."
+	@echo "Choose an installation method:"
+	@echo "1. For development mode (current directory): make install-dev"
+	@echo "2. For user installation (recommended): make install-user"
+	@echo "3. For system-wide installation: make install-system"
+
+# Install in development mode
+install-dev:
+	@echo "Installing package in development mode..."
 	uv pip install -e . || pip install -e .
-	@echo "Installation complete."
+	@echo "Installation complete. Run 'ms2md --version' to verify."
+	@echo "Note: You may need to restart your terminal for the command to be available."
+
+# Install for current user
+install-user:
+	@echo "Installing package for current user..."
+	pip install --user .
+	@echo "Installation complete. Run 'ms2md --version' to verify."
+	@echo "Note: Make sure ~/.local/bin is in your PATH."
+	@echo "You may need to restart your terminal for the command to be available."
+
+# Install system-wide
+install-system:
+	@echo "Installing package system-wide..."
+	@echo "This may require sudo privileges."
+	sudo pip install .
+	@echo "Installation complete. Run 'ms2md --version' to verify."
 
 # Uninstall package
 uninstall:

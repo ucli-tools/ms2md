@@ -12,13 +12,15 @@ A powerful tool for converting Microsoft Word documents with complex mathematica
   - [Features](#features)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-    - [Using uv (Recommended)](#using-uv-recommended)
-    - [Manual Installation](#manual-installation)
+    - [Using uv (Development Mode)](#using-uv-development-mode)
+    - [User Installation (Recommended)](#user-installation-recommended)
+    - [System-wide Installation](#system-wide-installation)
   - [Usage](#usage)
     - [Basic Conversion](#basic-conversion)
     - [Batch Conversion](#batch-conversion)
     - [Fixing LaTeX Delimiters](#fixing-latex-delimiters)
     - [Validating Output](#validating-output)
+    - [Use Cases](#use-cases)
   - [Examples](#examples)
   - [Advanced Usage](#advanced-usage)
     - [Custom Configuration](#custom-configuration)
@@ -55,7 +57,7 @@ This tool bridges the gap between Word documents and the Markdown+LaTeX workflow
 
 ## Installation
 
-### Using uv (Recommended)
+### Using uv (Development Mode)
 
 ```bash
 # Clone the repository
@@ -67,16 +69,31 @@ uv venv
 uv pip install -e .
 ```
 
-### Manual Installation
+### User Installation (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/ucli-tools/ms2md.git
 cd ms2md
 
-# Install dependencies
-pip install -r requirements.txt
+# Install for the current user
+make install-user
+# Or directly: pip install --user .
 ```
+
+### System-wide Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/ucli-tools/ms2md.git
+cd ms2md
+
+# Install system-wide (may require sudo)
+make install-system
+# Or directly: sudo pip install .
+```
+
+> **Note**: After installation, make sure the installation directory is in your PATH. You may need to restart your terminal for the `ms2md` command to be available.
 
 ## Usage
 
@@ -117,6 +134,10 @@ Check if a Markdown file has valid LaTeX equations:
 ```bash
 ms2md validate document.md
 ```
+
+### Use Cases
+
+For detailed usage scenarios and workflows, see [Use Cases](docs/usecase.md).
 
 ## Examples
 
