@@ -203,7 +203,20 @@ def extract_and_process_images(
             
             # Calculate the relative path from the output file to the image
             output_dir = os.path.dirname(os.path.abspath(output_file))
-            rel_path = os.path.relpath(new_path, output_dir)
+            
+            # Get the path relative to the output directory
+            rel_new_path = os.path.relpath(new_path, output_dir)
+            
+            # Remove 'files/output/' prefix if present
+            if rel_new_path.startswith('files/output/'):
+                rel_new_path = rel_new_path[len('files/output/'):]
+            
+            # Ensure the path starts with './'
+            if not rel_new_path.startswith('./'):
+                rel_new_path = './' + rel_new_path
+            
+            # Use this as the relative path
+            rel_path = rel_new_path
             
             # Replace the image reference in the content
             old_ref = f'![{alt_text}]({image_path})'
@@ -215,6 +228,37 @@ def extract_and_process_images(
         except Exception as e:
             logger.error(f"Failed to process image {full_path}: {str(e)}")
             failed_images += 1
+    
+    # Final fix: directly replace any remaining incorrect image paths
+    # This is a fallback in case the earlier replacements didn't catch everything
+    
+    # Fix paths with 'files/output/' prefix
+    content = re.sub(
+        r'!\[(.*?)\]\(files/output/(\.\/images/.*?)\)',
+        r'![\1](\2)',
+        content
+    )
+    
+    # Fix paths with just 'files/output' prefix (no trailing slash)
+    content = re.sub(
+        r'!\[(.*?)\]\(files/output(\.\/images/.*?)\)',
+        r'![\1](\2)',
+        content
+    )
+    
+    # Fix any other paths that might have 'files/output' anywhere in them
+    content = re.sub(
+        r'!\[(.*?)\]\((.*?)files/output/(.*?images/.*?)\)',
+        r'![\1](./\3)',
+        content
+    )
+    
+    # Ensure all image paths start with ./images/
+    content = re.sub(
+        r'!\[(.*?)\]\((?!\.\/images)(.*?)images/(.*?)\)',
+        r'![\1](./images/\3)',
+        content
+    )
     
     # Write the output file
     if not write_file(output_file, content):
