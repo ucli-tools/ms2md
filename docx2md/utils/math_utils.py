@@ -1,5 +1,5 @@
 """
-Math tokenizer utility for MS2MD.
+Math tokenizer utility for docx2md.
 
 Splits markdown content into alternating text and math spans,
 enabling context-aware processing of Unicode and equation patterns.

@@ -1,5 +1,5 @@
 """
-Figure caption processor for MS2MD.
+Figure caption processor for docx2md.
 
 Fixes the double-caption problem caused by Word documents having both:
   - An AI-generated alt-text on the image (captured by pandoc as the [alt] label)

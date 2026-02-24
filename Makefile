@@ -1,4 +1,4 @@
-# MS2MD Makefile
+# docx2md Makefile
 # Provides commands for development, testing, and installation
 
 .PHONY: setup test lint format clean build install install-dev install-user install-system uninstall all help
@@ -8,7 +8,7 @@ all: setup lint test
 
 # Help message
 help:
-	@echo "MS2MD Makefile"
+	@echo "docx2md Makefile"
 	@echo ""
 	@echo "Available commands:"
 	@echo "  setup       - Set up development environment with uv"
@@ -40,21 +40,21 @@ test:
 # Run with coverage
 coverage:
 	@echo "Running tests with coverage..."
-	pytest --cov=ms2md --cov-report=term --cov-report=html
+	pytest --cov=docx2md --cov-report=term --cov-report=html
 	@echo "Coverage report generated."
 
 # Run linters
 lint:
 	@echo "Running linters..."
-	flake8 ms2md tests
-	mypy ms2md
+	flake8 docx2md tests
+	mypy docx2md
 	@echo "Linting complete."
 
 # Format code
 format:
 	@echo "Formatting code..."
-	black ms2md tests
-	isort ms2md tests
+	black docx2md tests
+	isort docx2md tests
 	@echo "Formatting complete."
 
 # Clean build artifacts
@@ -83,14 +83,14 @@ install:
 install-dev:
 	@echo "Installing package in development mode..."
 	uv pip install -e . || pip install -e .
-	@echo "Installation complete. Run 'ms2md --version' to verify."
+	@echo "Installation complete. Run 'docx2md --version' to verify."
 	@echo "Note: You may need to restart your terminal for the command to be available."
 
 # Install for current user
 install-user:
 	@echo "Installing package for current user..."
 	pip install --user .
-	@echo "Installation complete. Run 'ms2md --version' to verify."
+	@echo "Installation complete. Run 'docx2md --version' to verify."
 	@echo "Note: Make sure ~/.local/bin is in your PATH."
 	@echo "You may need to restart your terminal for the command to be available."
 
@@ -99,12 +99,12 @@ install-system:
 	@echo "Installing package system-wide..."
 	@echo "This may require sudo privileges."
 	sudo pip install .
-	@echo "Installation complete. Run 'ms2md --version' to verify."
+	@echo "Installation complete. Run 'docx2md --version' to verify."
 
 # Uninstall package
 uninstall:
 	@echo "Uninstalling package..."
-	uv pip uninstall -y ms2md || pip uninstall -y ms2md
+	uv pip uninstall -y docx2md || pip uninstall -y docx2md
 	@echo "Uninstallation complete."
 
 # Create example files
@@ -118,7 +118,7 @@ local-run:
 	uv venv
 	uv pip install -e .
 	@echo "Running batch conversion..."
-	@bash -c "source .venv/bin/activate && python3 -m ms2md batch ./files/input ./files/output && deactivate"
+	@bash -c "source .venv/bin/activate && python3 -m docx2md batch ./files/input ./files/output && deactivate"
 	@echo "Batch conversion complete."
 
 # Test batch locally with fish shell
@@ -126,5 +126,5 @@ local-run-fish:
 	uv venv
 	uv pip install -e .
 	@echo "Running batch conversion with fish shell..."
-	@fish -c "source .venv/bin/activate.fish && python3 -m ms2md batch ./files/input ./files/output && deactivate"
+	@fish -c "source .venv/bin/activate.fish && python3 -m docx2md batch ./files/input ./files/output && deactivate"
 	@echo "Batch conversion complete."

@@ -1,4 +1,4 @@
-# Core dependencies for ms2md
+# Core dependencies for docx2md
 
 # Document processing
 python-docx==1.0.0

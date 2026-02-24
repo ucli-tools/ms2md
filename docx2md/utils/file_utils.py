@@ -1,5 +1,5 @@
 """
-File utilities for MS2MD.
+File utilities for docx2md.
 
 This module provides functions for file operations and path handling.
 """

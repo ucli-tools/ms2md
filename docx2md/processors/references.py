@@ -1,5 +1,5 @@
 """
-References processing module for MS2MD.
+References processing module for docx2md.
 
 This module provides functions for handling cross-references and citations
 in Markdown files.

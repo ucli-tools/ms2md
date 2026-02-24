@@ -1,5 +1,5 @@
 """
-DOCX processing module for MS2MD.
+DOCX processing module for docx2md.
 
 This module provides functions for extracting and processing content from
 Microsoft Word (.docx) documents.

@@ -1,15 +1,15 @@
 # Example Markdown Document with LaTeX Equations
 
-This is an example Markdown document that demonstrates the format produced by MS2MD when converting from Word documents with mathematical content.
+This is an example Markdown document that demonstrates the format produced by docx2md when converting from Word documents with mathematical content.
 
 ## Basic Formatting
 
-MS2MD preserves basic formatting from Word documents:
+docx2md preserves basic formatting from Word documents:
 
 - **Bold text** for emphasis
 - *Italic text* for emphasis
 - ~~Strikethrough text~~ for deleted content
-- [Hyperlinks](https://github.com/yourusername/ms2md)
+- [Hyperlinks](https://github.com/ucli-tools/docx2md)
 
 ## Headings
 
@@ -54,7 +54,7 @@ Images are extracted and referenced properly:
 
 ### Inline Equations
 
-MS2MD converts inline equations from Word to LaTeX format. For example, the Pythagorean theorem: $a^2 + b^2 = c^2$ or Einstein's famous equation: $E = mc^2$.
+docx2md converts inline equations from Word to LaTeX format. For example, the Pythagorean theorem: $a^2 + b^2 = c^2$ or Einstein's famous equation: $E = mc^2$.
 
 ### Display Equations
 
@@ -131,4 +131,4 @@ This sentence has a footnote[^1].
 
 ## Conclusion
 
-This example demonstrates the capabilities of MS2MD for converting Word documents with mathematical content to Markdown with LaTeX equations.
+This example demonstrates the capabilities of docx2md for converting Word documents with mathematical content to Markdown with LaTeX equations.

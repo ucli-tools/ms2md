@@ -1,5 +1,5 @@
 """
-MS2MD: Convert Microsoft Word documents with complex math to Markdown+LaTeX.
+docx2md: Convert Microsoft Word documents with complex math to Markdown+LaTeX.
 
 This package provides tools to convert Microsoft Word documents containing
 mathematical equations, tables, and figures into clean Markdown with LaTeX.

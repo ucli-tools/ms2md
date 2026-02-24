@@ -1,5 +1,5 @@
 """
-Command-line interface for MS2MD.
+Command-line interface for docx2md.
 
 This module provides a robust CLI with git-like subcommands for converting
 Microsoft Word documents to Markdown+LaTeX.
@@ -26,10 +26,10 @@ logger = setup_logger()
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
-@click.version_option(__version__, "-v", "--version", prog_name="MS2MD")
+@click.version_option(__version__, "-v", "--version", prog_name="docx2md")
 def main() -> None:
     """
-    MS2MD: Convert Microsoft Word documents with complex math to Markdown+LaTeX.
+    docx2md: Convert Microsoft Word documents with complex math to Markdown+LaTeX.
     
     This tool provides commands for converting Word documents to Markdown,
     fixing LaTeX delimiters, validating output, and more.

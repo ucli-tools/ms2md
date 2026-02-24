@@ -1,5 +1,5 @@
 """
-LaTeX formatter for MS2MD.
+LaTeX formatter for docx2md.
 
 This module provides functions for formatting LaTeX content within Markdown.
 """

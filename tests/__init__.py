@@ -1,3 +1,3 @@
 """
-Test package for MS2MD.
+Test package for docx2md.
 """

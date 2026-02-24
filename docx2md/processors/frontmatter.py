@@ -1,5 +1,5 @@
 """
-YAML frontmatter generator for MS2MD.
+YAML frontmatter generator for docx2md.
 
 Generates mdtexpdf-compatible YAML frontmatter from document metadata
 and prepends it to the markdown content.

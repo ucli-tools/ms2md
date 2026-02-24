@@ -1,5 +1,5 @@
 """
-Core conversion functionality for MS2MD.
+Core conversion functionality for docx2md.
 
 This module provides the main functions for converting Word documents to
 Markdown+LaTeX, including the processing pipeline and batch conversion.

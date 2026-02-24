@@ -1,4 +1,4 @@
-# MS2MD: MS Word to Markdown+LaTeX Converter
+# docx2md: MS Word to Markdown+LaTeX Converter
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -6,7 +6,7 @@ A powerful tool for converting Microsoft Word documents with complex mathematica
 
 ## Table of Contents
 
-- [MS2MD: MS Word to Markdown+LaTeX Converter](#ms2md-ms-word-to-markdownlatex-converter)
+- [docx2md: MS Word to Markdown+LaTeX Converter](#docx2md-ms-word-to-markdownlatex-converter)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Features](#features)
@@ -21,7 +21,7 @@ A powerful tool for converting Microsoft Word documents with complex mathematica
 
 ## Overview
 
-MS2MD is designed to convert Microsoft Word documents containing complex mathematical equations, tables, and figures into clean Markdown with LaTeX. It's particularly useful for technical books, academic papers, and scientific documentation.
+docx2md is designed to convert Microsoft Word documents containing complex mathematical equations, tables, and figures into clean Markdown with LaTeX. It's particularly useful for technical books, academic papers, and scientific documentation.
 
 This tool bridges the gap between Word documents and the Markdown+LaTeX workflow, enabling you to leverage tools like [mdtexpdf](https://github.com/ucli-tools/mdtexpdf) for generating beautiful PDFs.
 
@@ -44,14 +44,14 @@ This tool bridges the gap between Word documents and the Markdown+LaTeX workflow
 
 ## Get Started
 
-You can use MS2MD directly from the cloned repository.
+You can use docx2md directly from the cloned repository.
 
 This approach is useful for quick testing.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ms2md.git
-cd ms2md
+git clone https://github.com/ucli-tools/docx2md.git
+cd docx2md
 
 # Create input and output directories
 mkdir -p files/input files/output
@@ -72,7 +72,7 @@ uv pip install -e .  # Install the package in development mode with all dependen
 source .venv/bin/activate.fish
 
 # Run the batch conversion
-python3 -m ms2md batch ./files/input ./files/output
+python3 -m docx2md batch ./files/input ./files/output
 ```
 
 > **Note**: If you encounter an error about missing modules, make sure to install the package with `-e .` instead of `-r requirements.txt` to ensure all dependencies are correctly installed.
@@ -107,7 +107,7 @@ This will:
 Enable detailed logging for troubleshooting:
 
 ```bash
-python3 -m ms2md convert --log-level debug document.docx
+python3 -m docx2md convert --log-level debug document.docx
 ```
 
 ## Contributing

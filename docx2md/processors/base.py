@@ -1,5 +1,5 @@
 """
-Base processor class for MS2MD.
+Base processor class for docx2md.
 
 This module defines the base processor class that all specific processors
 should inherit from.

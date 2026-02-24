@@ -1,10 +1,10 @@
-# Contributing to MS2MD
+# Contributing to docx2md
 
-Thank you for your interest in contributing to MS2MD! This document provides guidelines and instructions for contributing to this project.
+Thank you for your interest in contributing to docx2md! This document provides guidelines and instructions for contributing to this project.
 
 ## Table of Contents
 
-- [Contributing to MS2MD](#contributing-to-ms2md)
+- [Contributing to docx2md](#contributing-to-docx2md)
   - [Table of Contents](#table-of-contents)
   - [Code of Conduct](#code-of-conduct)
   - [Getting Started](#getting-started)
@@ -41,8 +41,8 @@ We recommend using [uv](https://pypi.org/project/uv/) for managing dependencies 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ms2md.git
-cd ms2md
+git clone https://github.com/ucli-tools/docx2md.git
+cd docx2md
 
 # Set up a virtual environment
 uv venv
@@ -68,14 +68,14 @@ You can check your code with:
 
 ```bash
 # Format code
-black ms2md tests
+black docx2md tests
 
 # Sort imports
-isort ms2md tests
+isort docx2md tests
 
 # Run linters
-flake8 ms2md tests
-mypy ms2md
+flake8 docx2md tests
+mypy docx2md
 ```
 
 ## Pull Request Process
@@ -96,7 +96,7 @@ We use [pytest](https://docs.pytest.org/) for testing. All new features should i
 pytest
 
 # Run tests with coverage report
-pytest --cov=ms2md
+pytest --cov=docx2md
 
 # Run a specific test
 pytest tests/test_specific_file.py::test_specific_function
@@ -123,4 +123,4 @@ For feature requests, please describe the feature and its use case clearly.
 
 ## Thank You!
 
-Your contributions help make MS2MD better for everyone. We appreciate your time and effort!
+Your contributions help make docx2md better for everyone. We appreciate your time and effort!

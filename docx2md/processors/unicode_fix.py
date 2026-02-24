@@ -1,5 +1,5 @@
 """
-Unicode-to-LaTeX replacement processor for MS2MD.
+Unicode-to-LaTeX replacement processor for docx2md.
 
 Replaces Unicode math symbols that break pdflatex with their LaTeX equivalents.
 Applies context-aware replacements: different substitutions inside vs. outside

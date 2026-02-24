@@ -1,5 +1,5 @@
 """
-Configuration handling for MS2MD.
+Configuration handling for docx2md.
 
 This module provides functions for loading and validating configuration
 from YAML files, environment variables, and command-line arguments.
@@ -144,8 +144,8 @@ def _load_from_env() -> Dict[str, Any]:
     """
     Load configuration from environment variables.
     
-    Environment variables should be prefixed with MS2MD_ and use double underscores
-    to indicate nesting, e.g., MS2MD_EQUATIONS__INLINE_DELIMITERS="$,$"
+    Environment variables should be prefixed with DOCX2MD_ and use double underscores
+    to indicate nesting, e.g., DOCX2MD_EQUATIONS__INLINE_DELIMITERS="$,$"
     
     Returns:
         Dict containing the configuration from environment variables
@@ -153,8 +153,8 @@ def _load_from_env() -> Dict[str, Any]:
     config: Dict[str, Any] = {}
     
     for key, value in os.environ.items():
-        if key.startswith("MS2MD_"):
-            parts = key[6:].lower().split("__")
+        if key.startswith("DOCX2MD_"):
+            parts = key[8:].lower().split("__")
             
             # Build nested dictionary
             current = config

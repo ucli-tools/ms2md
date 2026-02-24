@@ -1,5 +1,5 @@
 """
-Processor modules for MS2MD.
+Processor modules for docx2md.
 
 These modules handle specific aspects of the conversion process,
 such as equations, images, tables, and references.

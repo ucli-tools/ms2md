@@ -1,5 +1,5 @@
 """
-Logging utilities for MS2MD.
+Logging utilities for docx2md.
 
 This module provides functions for setting up and configuring logging.
 """
@@ -21,7 +21,7 @@ _logger = logging.getLogger("docx2md")
 
 def setup_logger(level: Optional[str] = None) -> logging.Logger:
     """
-    Set up and configure the main logger for MS2MD.
+    Set up and configure the main logger for docx2md.
     
     Args:
         level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)

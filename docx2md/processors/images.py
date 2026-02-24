@@ -1,5 +1,5 @@
 """
-Image processing module for MS2MD.
+Image processing module for docx2md.
 
 This module provides functions for extracting and processing images
 from Word documents and handling them in Markdown files.

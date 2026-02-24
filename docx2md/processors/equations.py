@@ -1,5 +1,5 @@
 """
-Equation processing module for MS2MD.
+Equation processing module for docx2md.
 
 This module provides functions for processing and fixing LaTeX equations
 in Markdown files.

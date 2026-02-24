@@ -1,5 +1,5 @@
 """
-Equation fix processor for MS2MD.
+Equation fix processor for docx2md.
 
 Fixes garbled LaTeX equations produced by pandoc's OMML→LaTeX conversion.
 Common patterns from Microsoft Word's equation editor (OMML) that pandoc

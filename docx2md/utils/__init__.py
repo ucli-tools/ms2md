@@ -1,3 +1,3 @@
 """
-Utility modules for MS2MD.
+Utility modules for docx2md.
 """

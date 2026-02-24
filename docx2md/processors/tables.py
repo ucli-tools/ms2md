@@ -1,5 +1,5 @@
 """
-Table processing module for MS2MD.
+Table processing module for docx2md.
 
 This module provides functions for processing tables in Markdown files.
 """

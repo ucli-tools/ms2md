@@ -4,7 +4,7 @@
 """
 Example script for batch converting Word documents to Markdown.
 
-This script demonstrates how to use the MS2MD library to convert
+This script demonstrates how to use the docx2md library to convert
 multiple Word documents to Markdown in a single operation.
 """
 

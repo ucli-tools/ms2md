@@ -1,6 +1,6 @@
 # Test Fixtures
 
-This directory contains test fixtures for the MS2MD test suite.
+This directory contains test fixtures for the docx2md test suite.
 
 ## Adding Test Files
 

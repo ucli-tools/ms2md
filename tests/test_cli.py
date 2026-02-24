@@ -40,7 +40,7 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(result.exit_code, 0)
         
         # Check that the help text contains expected sections
-        self.assertIn("MS2MD: Convert Microsoft Word documents", result.output)
+        self.assertIn("docx2md: Convert Microsoft Word documents", result.output)
         self.assertIn("--help", result.output)
         self.assertIn("--version", result.output)
     
@@ -52,9 +52,9 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(result.exit_code, 0)
         
         # Check that the version is displayed
-        self.assertIn("MS2MD, version", result.output)
+        self.assertIn("docx2md, version", result.output)
     
-    @patch("ms2md.converter.convert_docx_to_markdown")
+    @patch("docx2md.converter.convert_docx_to_markdown")
     def test_convert_command(self, mock_convert):
         """Test the convert command."""
         # Create a dummy DOCX file
@@ -82,7 +82,7 @@ class TestCLI(unittest.TestCase):
         args, kwargs = mock_convert.call_args
         self.assertEqual(str(args[0]), str(input_file))
     
-    @patch("ms2md.converter.batch_convert")
+    @patch("docx2md.converter.batch_convert")
     def test_batch_command(self, mock_batch):
         """Test the batch command."""
         # Create a dummy input directory
@@ -112,7 +112,7 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(str(args[0]), str(input_dir))
         self.assertEqual(str(args[1]), str(output_dir))
     
-    @patch("ms2md.processors.equations.fix_delimiters")
+    @patch("docx2md.processors.equations.fix_delimiters")
     def test_fix_delimiters_command(self, mock_fix):
         """Test the fix-delimiters command."""
         # Create a dummy Markdown file
@@ -139,7 +139,7 @@ class TestCLI(unittest.TestCase):
         args, kwargs = mock_fix.call_args
         self.assertEqual(str(args[0]), str(input_file))
     
-    @patch("ms2md.processors.equations.validate_equations")
+    @patch("docx2md.processors.equations.validate_equations")
     def test_validate_command(self, mock_validate):
         """Test the validate command."""
         # Create a dummy Markdown file
@@ -167,7 +167,7 @@ class TestCLI(unittest.TestCase):
         args, kwargs = mock_validate.call_args
         self.assertEqual(str(args[0]), str(input_file))
     
-    @patch("ms2md.processors.equations.validate_equations")
+    @patch("docx2md.processors.equations.validate_equations")
     def test_validate_command_failure(self, mock_validate):
         """Test the validate command with validation failure."""
         # Create a dummy Markdown file
