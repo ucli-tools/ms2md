@@ -109,44 +109,71 @@ class TestCleanLatex:
     def test_empty_string(self, extractor):
         assert extractor._clean_latex("") == ""
 
-    def test_strip_equation_number_simple(self, extractor):
+    def test_equation_number_to_tag_simple(self, extractor):
         result = extractor._clean_latex(r"x + y.\#(1.1.1)")
-        assert result == "x + y"
+        assert r"\tag{1.1.1}" in result
+        assert "#" not in result
 
-    def test_strip_equation_number_comma(self, extractor):
+    def test_equation_number_to_tag_comma(self, extractor):
         result = extractor._clean_latex(r"\end{pmatrix},\#(1.1.6)")
-        assert result == r"\end{pmatrix}"
+        assert r"\tag{1.1.6}" in result
 
-    def test_strip_equation_number_with_letter(self, extractor):
+    def test_equation_number_to_tag_with_letter(self, extractor):
         result = extractor._clean_latex(r"T(v) = Mv.\#(1.1.13a)")
-        assert result == "T(v) = Mv"
+        assert r"\tag{1.1.13a}" in result
 
-    def test_strip_equation_number_space_before(self, extractor):
+    def test_equation_number_to_tag_space_before(self, extractor):
         result = extractor._clean_latex(r"x = y\ \#(1.9.1)")
-        assert result == "x = y"
+        assert r"\tag{1.9.1}" in result
 
-    def test_strip_equation_number_deep(self, extractor):
+    def test_equation_number_to_tag_deep(self, extractor):
         result = extractor._clean_latex(r"a + b.\#(1.8.454)")
-        assert result == "a + b"
+        assert r"\tag{1.8.454}" in result
 
-    def test_strip_equation_number_before_end_array(self, extractor):
-        """#(N.N.N) at end of line but not end of string (multiline equation)."""
+    def test_equation_number_to_tag_before_end_array(self, extractor):
+        """#(N.N.N) at end of line converted to \\tag, \\end{array} preserved."""
         result = extractor._clean_latex(
             "g_{k} \\in G.\\#(1.1.1)\n\\end{array}"
         )
-        assert "#(" not in result
+        assert r"\tag{1.1.1}" in result
         assert "\\end{array}" in result
 
-    def test_no_strip_hash_in_middle(self, extractor):
-        """#(...) in the middle of an equation should NOT be stripped."""
+    def test_no_tag_hash_in_middle(self, extractor):
+        """#(...) in the middle of an equation should NOT be converted."""
         result = extractor._clean_latex(r"f(\#(x)) + y")
-        # The pattern only matches at end-of-string, so middle is safe
-        assert "#" in result
+        assert r"\tag" not in result
 
-    def test_strip_equation_number_no_escape(self, extractor):
+    def test_equation_number_to_tag_no_escape(self, extractor):
         """Bare #(1.1.5) without backslash-escape."""
         result = extractor._clean_latex("p^{n}.#(1.1.5)")
-        assert result == "p^{n}"
+        assert r"\tag{1.1.5}" in result
+
+    def test_fix_bare_right_delimiter(self, extractor):
+        r"""Bare \right at end of line gets invisible . delimiter."""
+        content = "\\begin{array}{l}\nx = 1\n\\end{array} \\right\n\\end{array}"
+        result = extractor._clean_latex(content)
+        assert r"\right." in result
+        assert result.count(r"\right") == result.count(r"\right.")
+
+    def test_fix_bare_right_with_comma(self, extractor):
+        r"""Bare \right with preceding comma."""
+        content = "\\end{array},\\  \\right\n\\end{array}"
+        result = extractor._clean_latex(content)
+        assert r"\right." in result
+
+    def test_right_with_delimiter_unchanged(self, extractor):
+        r"""\right) or \right. should not be modified."""
+        content = r"\left( x \right)"
+        result = extractor._clean_latex(content)
+        assert r"\right)" in result
+
+    def test_equation_number_trailing_hash_to_tag(self, extractor):
+        r"""Edge case: trailing \# after equation number converted to \tag."""
+        result = extractor._clean_latex(
+            r"\end{array} \right.,\#(1.6.22)\#"
+        )
+        assert r"\tag{1.6.22}" in result
+        assert "#(1.6" not in result
 
 
 # -----------------------------------------------------------------------

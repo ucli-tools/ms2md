@@ -6,7 +6,7 @@ Markdown+LaTeX, including the processing pipeline and batch conversion.
 
 Pipeline order:
   1. Extract DOCX metadata (python-docx)
-  2. pandoc: docx → raw markdown  +  --extract-media=./media
+  2. pandoc: docx → raw markdown  +  --extract-media=./img
   3. WordCleanupProcessor   — remove TOC, heading markup, heading IDs, fix image paths
   4. UnicodeFixProcessor    — replace Unicode math chars with LaTeX
   5. FigureProcessor        — fix double figure captions
@@ -75,7 +75,7 @@ def convert_docx_to_markdown(
     doc_content = extract_docx_content(input_path)
 
     # Step 2: pandoc docx → markdown with image extraction
-    media_dir = output_path.parent / config.get("images", {}).get("extract_path", "./media")
+    media_dir = output_path.parent / config.get("images", {}).get("extract_path", "./img")
     media_dir.mkdir(parents=True, exist_ok=True)
 
     extra_args = list(config.get("pandoc", {}).get("extra_args", ["--wrap=none"]))

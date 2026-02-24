@@ -92,14 +92,14 @@ class TestWordCleanupProcessor(unittest.TestCase):
     # ------------------------------------------------------------------
 
     def test_remove_image_size_attrs(self):
-        content = '![alt text](media/img.png){width="3in" height="2in"}\n'
+        content = '![alt text](img/image.png){width="3in" height="2in"}\n'
         result = self._proc().process(content)
-        self.assertIn("![alt text](media/img.png)", result)
+        self.assertIn("![alt text](img/image.png)", result)
         self.assertNotIn('width=', result)
         self.assertNotIn('height=', result)
 
     def test_image_without_attrs_unchanged(self):
-        content = "![diagram](media/diagram.png)\n"
+        content = "![diagram](img/diagram.png)\n"
         result = self._proc().process(content)
         self.assertEqual(content, result)
 
@@ -109,15 +109,15 @@ class TestWordCleanupProcessor(unittest.TestCase):
 
     def test_fix_absolute_image_path(self):
         output_dir = Path('/tmp/output')
-        content = "![fig](/tmp/output/media/img.png)"
+        content = "![fig](/tmp/output/img/image.png)"
         result = self._proc(output_dir=output_dir).process(content)
-        self.assertNotIn('/tmp/output/media/img.png', result)
-        self.assertIn('media/img.png', result)
+        self.assertNotIn('/tmp/output/img/image.png', result)
+        self.assertIn('img/image.png', result)
 
     def test_relative_path_unchanged(self):
-        content = "![fig](media/img.png)"
+        content = "![fig](img/image.png)"
         result = self._proc().process(content)
-        self.assertIn("media/img.png", result)
+        self.assertIn("img/image.png", result)
 
     # ------------------------------------------------------------------
     # Config flags

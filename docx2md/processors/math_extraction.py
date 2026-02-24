@@ -381,6 +381,9 @@ class MathExtractor:
     # Phase 3: splice
     # ------------------------------------------------------------------
 
+    # Regex to extract \tag{...} from equation content
+    _RE_TAG = re.compile(r'\s*\\tag\{([^}]+)\}')
+
     def _splice(
         self,
         markdown: str,
@@ -399,17 +402,43 @@ class MathExtractor:
                 continue
 
             if eq["kind"] == "display":
-                if self._is_wide_equation(latex):
-                    # Wrap in resizebox so it scales to fit the page
-                    replacement = (
-                        "\n\n```{=latex}\n"
-                        "\\resizebox{\\linewidth}{!}{$\\displaystyle\n"
-                        f"{latex}\n"
-                        "$}\n```\n\n"
-                    )
+                # Detect QED-only equations (just \square or \blacksquare)
+                stripped = self._strip_array_wrapper(latex).strip()
+                if stripped in (r'\square', r'\blacksquare'):
+                    replacement = f"\n\n\\hfill ${stripped}$\n\n"
+                elif self._is_wide_equation(latex):
+                    # Extract \tag from content — it can't live inside
+                    # $\displaystyle...$, must go in the \[...\] wrapper
+                    tag_match = self._RE_TAG.search(latex)
+                    latex_body = self._RE_TAG.sub("", latex)
+                    # Use \sbox to measure, only shrink if wider than
+                    # \linewidth (never scale up)
+                    if tag_match:
+                        tag_str = f"\\tag{{{tag_match.group(1)}}}"
+                        replacement = (
+                            "\n\n```{=latex}\n"
+                            f"\\[\\sbox0{{$\\displaystyle {latex_body}$}}%\n"
+                            "\\ifdim\\wd0>\\linewidth"
+                            "\\resizebox{\\linewidth}{!}{\\usebox0}"
+                            "\\else\\usebox0\\fi"
+                            f" {tag_str}\n\\]\n```\n\n"
+                        )
+                    else:
+                        replacement = (
+                            "\n\n```{=latex}\n"
+                            "\\[\\sbox0{$\\displaystyle\n"
+                            f"{latex_body}\n"
+                            "$}%\n"
+                            "\\ifdim\\wd0>\\linewidth"
+                            "\\resizebox{\\linewidth}{!}{\\usebox0}"
+                            "\\else\\usebox0\\fi\n"
+                            "\\]\n```\n\n"
+                        )
                 else:
                     replacement = f"\n\n$$\n{latex}\n$$\n\n"
             else:
+                # Inline math — strip \tag (equation numbers don't apply)
+                latex = self._RE_TAG.sub("", latex)
                 replacement = f"${latex}$"
 
             markdown = markdown.replace(placeholder, replacement)
@@ -425,6 +454,18 @@ class MathExtractor:
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
+
+    # Strip \begin{array}{...}...\end{array} wrapper to get inner content
+    _RE_ARRAY_WRAPPER = re.compile(
+        r'^\s*\\begin\{array\}\{[^}]*\}\s*(.*?)\s*\\end\{array\}\s*$',
+        re.DOTALL,
+    )
+
+    @staticmethod
+    def _strip_array_wrapper(latex: str) -> str:
+        """Remove outer \\begin{array}...\\end{array} wrapper if present."""
+        m = MathExtractor._RE_ARRAY_WRAPPER.match(latex)
+        return m.group(1) if m else latex
 
     @staticmethod
     def _is_wide_equation(latex: str) -> bool:
@@ -446,26 +487,39 @@ class MathExtractor:
         return False
 
     # Regex for equation numbers like #(1.1.46) or #(1.1.13a)
+    # Captures the number so we can convert #(1.1.46) → \tag{1.1.46}
     # Uses re.MULTILINE so $ matches end-of-line (not just end-of-string),
     # catching numbers before \end{array} on the next line.
     _RE_EQ_NUMBER = re.compile(
         r'[,.\s\\]*'           # optional leading punctuation/space/backslash
         r'\\?#\('              # literal #( possibly with backslash escape
-        r'[0-9]+(?:\.[0-9]+)*' # dotted number like 1.1.46
-        r'[a-z]?'              # optional letter suffix like 13a
-        r'\)\s*$'              # closing paren at end of line
+        r'([0-9]+(?:\.[0-9]+)*' # dotted number like 1.1.46 (capture group 1)
+        r'[a-z]?)'             # optional letter suffix like 13a
+        r'\)'                  # closing paren
+        r'[\s\\#]*$'           # trailing whitespace/backslash/hash at end of line
         , re.MULTILINE
     )
 
     # Threshold (chars) above which a display equation gets \resizebox wrapping
     _WIDE_EQ_THRESHOLD = 300
 
+    # Matches bare \right without a valid delimiter.
+    # Catches \right at end-of-line AND \right before \tag{...}
+    _RE_BARE_RIGHT = re.compile(
+        r'\\right(?=\s*(?:\\tag\{|$))', re.MULTILINE
+    )
+
+    # QED marker: \#\square or \# \square (hash + tombstone)
+    _RE_QED = re.compile(r'\\?#\s*\\square')
+
     @staticmethod
     def _clean_latex(content: str) -> str:
         """Post-process a single LaTeX equation string.
 
         - Strip trailing ``\\ `` (backslash-space), convergence loop
-        - Strip trailing equation numbers like ``#(1.1.46)``
+        - Convert equation numbers ``#(1.1.46)`` → ``\\tag{1.1.46}``
+        - Fix QED markers ``\\#\\square`` → ``\\square``
+        - Fix bare ``\\right`` without delimiter (add invisible ``.``)
         - Fix double subscripts: ``}_{`` → ``{}_{``
         - Fix double superscripts: ``}^{`` → ``{}^{``
         """
@@ -475,8 +529,21 @@ class MathExtractor:
             content = content.rstrip().rstrip("\\").rstrip()
             limit -= 1
 
-        # Strip trailing equation numbers: ,#(1.1.46) or .\#(1.9.3) etc.
+        # Extract equation numbers and place \tag at the very end of content
+        # so it sits at the outer math level (not inside array/aligned blocks)
+        last_number = None
+        for m in MathExtractor._RE_EQ_NUMBER.finditer(content):
+            last_number = m.group(1)
         content = MathExtractor._RE_EQ_NUMBER.sub("", content)
+        if last_number:
+            content = content.rstrip() + f" \\tag{{{last_number}}}"
+
+        # Fix QED markers: \#\square → \square
+        content = MathExtractor._RE_QED.sub(r'\\square', content)
+
+        # Fix bare \right without delimiter (piecewise functions)
+        # Pandoc sometimes omits the invisible . delimiter
+        content = MathExtractor._RE_BARE_RIGHT.sub(r'\\right.', content)
 
         # Double subscript/superscript fix
         content = content.replace("}_{", "}{}_{")

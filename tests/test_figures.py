@@ -18,7 +18,7 @@ class TestFigureProcessor(unittest.TestCase):
 
     def test_replaces_ai_alt_with_real_caption(self):
         content = (
-            "![A computer generated image of a graph automatically generated](media/img.png)\n\n"
+            "![A computer generated image of a graph automatically generated](img/img.png)\n\n"
             "***Figure 1.*** *-- The Lie algebra structure of the polyplex.*\n\n"
             "Body text continues here."
         )
@@ -31,7 +31,7 @@ class TestFigureProcessor(unittest.TestCase):
 
     def test_caption_paragraph_removed(self):
         content = (
-            "![AI alt text](media/fig.png)\n\n"
+            "![AI alt text](img/fig.png)\n\n"
             "***Figure 2.*** *-- Some description here.*\n\n"
             "Next paragraph."
         )
@@ -39,7 +39,7 @@ class TestFigureProcessor(unittest.TestCase):
         # Caption block should not appear separately
         self.assertNotIn("***Figure 2.***", result)
         # Image should still be there
-        self.assertIn("media/fig.png", result)
+        self.assertIn("img/fig.png", result)
 
     # ------------------------------------------------------------------
     # Caption with math preserved
@@ -47,7 +47,7 @@ class TestFigureProcessor(unittest.TestCase):
 
     def test_caption_preserves_math(self):
         content = (
-            "![generic alt](media/eq.png)\n\n"
+            "![generic alt](img/eq.png)\n\n"
             "***Figure 3.*** *-- The formula $E = mc^2$ in context.*\n\n"
             "End."
         )
@@ -61,12 +61,12 @@ class TestFigureProcessor(unittest.TestCase):
 
     def test_image_without_caption_unchanged(self):
         content = (
-            "![diagram](media/diag.png)\n\n"
+            "![diagram](img/diag.png)\n\n"
             "This paragraph is not a caption.\n\n"
             "More text."
         )
         result = self._proc().process(content)
-        self.assertIn("![diagram](media/diag.png)", result)
+        self.assertIn("![diagram](img/diag.png)", result)
         self.assertIn("This paragraph is not a caption.", result)
 
     # ------------------------------------------------------------------
@@ -75,7 +75,7 @@ class TestFigureProcessor(unittest.TestCase):
 
     def test_multiline_caption_collapsed(self):
         content = (
-            "![alt](media/long.png)\n\n"
+            "![alt](img/long.png)\n\n"
             "***Figure 4.*** *-- This is a long caption that wraps\n"
             "across multiple lines in the source.*\n\n"
             "Footer."
@@ -83,7 +83,7 @@ class TestFigureProcessor(unittest.TestCase):
         result = self._proc().process(content)
         self.assertIn("Figure 4.", result)
         self.assertIn("wraps", result)
-        self.assertNotIn("alt", result.split('(media/long.png)')[0].split('![')[-1])
+        self.assertNotIn("alt", result.split('(img/long.png)')[0].split('![')[-1])
 
     # ------------------------------------------------------------------
     # Disabled processor
@@ -92,7 +92,7 @@ class TestFigureProcessor(unittest.TestCase):
     def test_disabled(self):
         config = {"figures": {"enabled": False}}
         content = (
-            "![AI alt text](media/fig.png)\n\n"
+            "![AI alt text](img/fig.png)\n\n"
             "***Figure 1.*** *-- Real caption.*\n\n"
             "Text."
         )

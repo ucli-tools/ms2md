@@ -23,7 +23,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "use_pandoc_mathml": False,  # False = keep LaTeX $...$ (correct for mdtexpdf)
     },
     "images": {
-        "extract_path": "./media",   # matches pandoc --extract-media convention
+        "extract_path": "./img",     # image extraction directory
         "optimize": False,           # don't resize/compress by default
         "max_width": 1200,
         "max_height": 900,
