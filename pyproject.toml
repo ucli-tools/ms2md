@@ -57,8 +57,9 @@ dev = [
 [project.scripts]
 docx2md = "docx2md.cli:main"
 
-[tool.setuptools]
-packages = ["docx2md"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["docx2md*"]
 
 [tool.black]
 line-length = 88

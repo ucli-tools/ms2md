@@ -36,6 +36,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "extra_args": ["--wrap=none"],
     },
     "processing": {
+        "math_extraction": True,
         "fix_delimiters": True,
         "extract_images": True,
         "process_tables": True,

@@ -84,14 +84,43 @@ def convert_docx_to_markdown(
     # Never use --mathml: we want LaTeX $...$ output, not MathML
     # (use_pandoc_mathml is kept in config for backwards compat but defaults False)
 
-    markdown_content = pypandoc.convert_file(
-        str(input_path),
-        "markdown",
-        format="docx",
-        extra_args=extra_args,
-    )
+    stats: Dict[str, Any] = {}
 
     processing = config.get("processing", {})
+    math_extraction_enabled = processing.get("math_extraction", True)
+    skip_equation_fix = False
+    skip_fix_delimiters = False
+
+    if math_extraction_enabled:
+        try:
+            from docx2md.processors.math_extraction import MathExtractor
+
+            extractor = MathExtractor(config)
+            markdown_content, math_stats = extractor.extract_and_convert(
+                input_path, media_dir, extra_args
+            )
+            stats.update(math_stats)
+            skip_equation_fix = True
+            skip_fix_delimiters = True
+            logger.info(
+                "Math extraction: %d equations processed",
+                math_stats.get("math_equations_extracted", 0),
+            )
+        except Exception as e:
+            logger.warning(f"Math extraction failed, falling back to pandoc: {e}")
+            markdown_content = pypandoc.convert_file(
+                str(input_path),
+                "markdown",
+                format="docx",
+                extra_args=extra_args,
+            )
+    else:
+        markdown_content = pypandoc.convert_file(
+            str(input_path),
+            "markdown",
+            format="docx",
+            extra_args=extra_args,
+        )
 
     # Step 3: Word structural cleanup (TOC, heading markup, image paths)
     if processing.get("cleanup", True):
@@ -109,12 +138,12 @@ def convert_docx_to_markdown(
         markdown_content = proc.process(markdown_content)
 
     # Step 6: Equation fix (garbled OMML patterns)
-    if processing.get("fix_equations", True):
+    # Skipped when math extraction succeeded — equations already clean
+    if processing.get("fix_equations", True) and not skip_equation_fix:
         proc = EquationFixProcessor(config)
         markdown_content = proc.process(markdown_content)
 
     # Steps 7–9: file-based processors (write to temp file, process, read back)
-    stats: Dict[str, Any] = {}
 
     # Create temp file in the output directory so that the images processor can
     # resolve relative image paths (e.g. media/media/img.png) correctly.
@@ -127,7 +156,8 @@ def convert_docx_to_markdown(
 
     try:
         # Step 7: fix \(...\) → $...$ and \[...\] → $$...$$
-        if processing.get("fix_delimiters", True):
+        # Skipped when math extraction succeeded — delimiters already correct
+        if processing.get("fix_delimiters", True) and not skip_fix_delimiters:
             inline_delimiters = tuple(
                 config.get("equations", {}).get("inline_delimiters", ["$", "$"])
             )
@@ -197,7 +227,10 @@ def convert_docx_to_markdown(
     return {
         "input_file": str(input_path),
         "output_file": str(output_path),
-        "equations_count": stats.get("inline_fixed", 0) + stats.get("display_fixed", 0),
+        "equations_count": (
+            stats.get("math_equations_extracted", 0)
+            or stats.get("inline_fixed", 0) + stats.get("display_fixed", 0)
+        ),
         "images_count": stats.get("images_processed", 0),
         "tables_count": stats.get("tables_processed", 0),
         **stats,
