@@ -16,7 +16,7 @@ from docx.document import Document
 from docx.oxml.text.paragraph import CT_P
 from docx.text.paragraph import Paragraph
 
-from ms2md.utils.logging_utils import get_logger
+from docx2md.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

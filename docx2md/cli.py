@@ -14,11 +14,11 @@ import click
 from rich.console import Console
 from rich.panel import Panel
 
-from ms2md import __version__
-from ms2md.config import load_config
-from ms2md.converter import convert_docx_to_markdown, batch_convert
-from ms2md.processors.equations import fix_delimiters
-from ms2md.utils.logging_utils import setup_logger
+from docx2md import __version__
+from docx2md.config import load_config
+from docx2md.converter import convert_docx_to_markdown, batch_convert
+from docx2md.processors.equations import fix_delimiters
+from docx2md.utils.logging_utils import setup_logger
 
 # Initialize console for rich output
 console = Console()
@@ -213,7 +213,7 @@ def validate(input_file: str, strict: bool) -> None:
     
     INPUT_FILE: Path to the Markdown file to validate
     """
-    from ms2md.processors.equations import validate_equations
+    from docx2md.processors.equations import validate_equations
     
     try:
         console.print(f"Validating LaTeX equations in [bold]{input_file}[/bold]...")

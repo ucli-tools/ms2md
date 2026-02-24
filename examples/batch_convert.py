@@ -12,7 +12,7 @@ import os
 import sys
 from pathlib import Path
 
-from ms2md.converter import batch_convert
+from docx2md.converter import batch_convert
 
 
 def main():

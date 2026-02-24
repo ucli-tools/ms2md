@@ -11,7 +11,7 @@ from typing import Any, Dict, Optional, Union
 
 import yaml
 
-from ms2md.utils.logging_utils import get_logger
+from docx2md.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -20,13 +20,13 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "equations": {
         "inline_delimiters": ["$", "$"],
         "display_delimiters": ["$$", "$$"],
-        "use_pandoc_mathml": True,
+        "use_pandoc_mathml": False,  # False = keep LaTeX $...$ (correct for mdtexpdf)
     },
     "images": {
-        "extract_path": "./images",
-        "optimize": True,
-        "max_width": 800,
-        "max_height": 600,
+        "extract_path": "./media",   # matches pandoc --extract-media convention
+        "optimize": False,           # don't resize/compress by default
+        "max_width": 1200,
+        "max_height": 900,
     },
     "tables": {
         "format": "pipe",  # Options: pipe, grid, simple
@@ -39,6 +39,50 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "fix_delimiters": True,
         "extract_images": True,
         "process_tables": True,
+        # New processors
+        "cleanup": True,
+        "fix_figures": True,
+        "fix_unicode": True,
+        "fix_equations": True,
+        "generate_frontmatter": True,
+    },
+    "cleanup": {
+        "strip_triple_dollar": True,
+        "remove_toc": True,
+        "strip_heading_markup": True,
+        "strip_heading_ids": True,
+        "remove_image_attrs": True,
+        "fix_image_paths": True,
+    },
+    "figures": {
+        "enabled": True,
+    },
+    "unicode_fix": {
+        "enabled": True,
+        "custom_replacements": [],
+        # Each entry: {"char": "X", "always": "Y"}  or
+        #             {"char": "X", "text": "Y", "math": "Z"}
+    },
+    "equation_fix": {
+        "enabled": True,
+    },
+    "section_numbers": {
+        "style": "none",    # Options: none | arabic | roman | alpha
+        "heading_level": 1,
+    },
+    "yaml_frontmatter": {
+        "enabled": True,
+        "extract_from_body": True,      # scan body for **Title**, *subtitle*, author
+        "strip_body_title_block": True, # remove title/author lines from body after extraction
+        "default_author": "",
+        "mdtexpdf": {
+            "format": "article",
+            "toc": True,
+            "toc-depth": 2,
+            "no_numbers": True,
+            "header_footer_policy": "all",
+            "pageof": True,
+        },
     },
 }
 

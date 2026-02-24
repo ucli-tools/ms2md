@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from ms2md.processors.equations import fix_delimiters, validate_equations
+from docx2md.processors.equations import fix_delimiters, validate_equations
 
 
 class TestEquations(unittest.TestCase):

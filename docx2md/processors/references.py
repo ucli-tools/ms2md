@@ -9,9 +9,9 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
-from ms2md.processors.base import BaseProcessor
-from ms2md.utils.file_utils import read_file, write_file
-from ms2md.utils.logging_utils import get_logger
+from docx2md.processors.base import BaseProcessor
+from docx2md.utils.file_utils import read_file, write_file
+from docx2md.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

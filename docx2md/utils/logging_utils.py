@@ -16,7 +16,7 @@ logging.basicConfig(
 )
 
 # Create a logger for the package
-_logger = logging.getLogger("ms2md")
+_logger = logging.getLogger("docx2md")
 
 
 def setup_logger(level: Optional[str] = None) -> logging.Logger:
@@ -54,5 +54,5 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
         Logger instance
     """
     if name:
-        return logging.getLogger(f"ms2md.{name}")
+        return logging.getLogger(f"docx2md.{name}")
     return _logger

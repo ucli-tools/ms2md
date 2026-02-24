@@ -9,7 +9,7 @@ import shutil
 from pathlib import Path
 from typing import List, Optional, Set, Union
 
-from ms2md.utils.logging_utils import get_logger
+from docx2md.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

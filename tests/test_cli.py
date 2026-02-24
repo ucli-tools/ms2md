@@ -12,7 +12,7 @@ import click
 import pytest
 from click.testing import CliRunner
 
-from ms2md.cli import main
+from docx2md.cli import main
 
 
 class TestCLI(unittest.TestCase):

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from ms2md.converter import convert_docx_to_markdown, batch_convert
+from docx2md.converter import convert_docx_to_markdown, batch_convert
 
 
 class TestConverter(unittest.TestCase):

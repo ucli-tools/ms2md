@@ -6,7 +6,7 @@ This module provides functions for formatting LaTeX content within Markdown.
 
 from typing import Any, Dict, List, Optional, Union
 
-from ms2md.utils.logging_utils import get_logger
+from docx2md.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

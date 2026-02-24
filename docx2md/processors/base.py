@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 from pathlib import Path
 
-from ms2md.utils.logging_utils import get_logger
+from docx2md.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
