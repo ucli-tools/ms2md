@@ -109,6 +109,83 @@ class TestCleanLatex:
     def test_empty_string(self, extractor):
         assert extractor._clean_latex("") == ""
 
+    def test_strip_equation_number_simple(self, extractor):
+        result = extractor._clean_latex(r"x + y.\#(1.1.1)")
+        assert result == "x + y"
+
+    def test_strip_equation_number_comma(self, extractor):
+        result = extractor._clean_latex(r"\end{pmatrix},\#(1.1.6)")
+        assert result == r"\end{pmatrix}"
+
+    def test_strip_equation_number_with_letter(self, extractor):
+        result = extractor._clean_latex(r"T(v) = Mv.\#(1.1.13a)")
+        assert result == "T(v) = Mv"
+
+    def test_strip_equation_number_space_before(self, extractor):
+        result = extractor._clean_latex(r"x = y\ \#(1.9.1)")
+        assert result == "x = y"
+
+    def test_strip_equation_number_deep(self, extractor):
+        result = extractor._clean_latex(r"a + b.\#(1.8.454)")
+        assert result == "a + b"
+
+    def test_strip_equation_number_before_end_array(self, extractor):
+        """#(N.N.N) at end of line but not end of string (multiline equation)."""
+        result = extractor._clean_latex(
+            "g_{k} \\in G.\\#(1.1.1)\n\\end{array}"
+        )
+        assert "#(" not in result
+        assert "\\end{array}" in result
+
+    def test_no_strip_hash_in_middle(self, extractor):
+        """#(...) in the middle of an equation should NOT be stripped."""
+        result = extractor._clean_latex(r"f(\#(x)) + y")
+        # The pattern only matches at end-of-string, so middle is safe
+        assert "#" in result
+
+    def test_strip_equation_number_no_escape(self, extractor):
+        """Bare #(1.1.5) without backslash-escape."""
+        result = extractor._clean_latex("p^{n}.#(1.1.5)")
+        assert result == "p^{n}"
+
+
+# -----------------------------------------------------------------------
+# _is_wide_equation tests
+# -----------------------------------------------------------------------
+
+class TestIsWideEquation:
+    """Tests for MathExtractor._is_wide_equation."""
+
+    def test_short_equation_not_wide(self):
+        assert not MathExtractor._is_wide_equation("x + y = z")
+
+    def test_long_equation_is_wide(self):
+        eq = "a + " * 100  # 400 chars
+        assert MathExtractor._is_wide_equation(eq)
+
+    def test_triple_matrix_is_wide(self):
+        eq = (
+            r"\begin{pmatrix} a \end{pmatrix}"
+            r"\begin{pmatrix} b \end{pmatrix}"
+            r"\begin{pmatrix} c \end{pmatrix}"
+        )
+        assert MathExtractor._is_wide_equation(eq)
+
+    def test_double_matrix_not_wide(self):
+        eq = (
+            r"\begin{pmatrix} a \end{pmatrix}"
+            r"\begin{pmatrix} b \end{pmatrix}"
+        )
+        assert not MathExtractor._is_wide_equation(eq)
+
+    def test_bmatrix_counted(self):
+        eq = (
+            r"\begin{bmatrix} a \end{bmatrix}"
+            r"\begin{bmatrix} b \end{bmatrix}"
+            r"\begin{bmatrix} c \end{bmatrix}"
+        )
+        assert MathExtractor._is_wide_equation(eq)
+
 
 # -----------------------------------------------------------------------
 # _strip_delimiters tests
@@ -187,6 +264,26 @@ class TestSplice:
         assert "$$\nb = c\n$$" in result
         assert "$d$" in result
         assert "@@MATH" not in result
+
+    def test_splice_wide_display_gets_resizebox(self, extractor):
+        """Wide display equations get wrapped in resizebox."""
+        long_latex = "a + " * 100  # > 300 chars
+        equations = [{"idx": 0, "kind": "display", "placeholder": "@@MATH_DISPLAY_0000@@", "xml": ""}]
+        eq_latex = {0: long_latex.strip()}
+        md = "Before\n\n@@MATH_DISPLAY_0000@@\n\nAfter"
+        result = extractor._splice(md, eq_latex, equations)
+        assert "\\resizebox{\\linewidth}" in result
+        assert "\\displaystyle" in result
+        assert "$$" not in result  # should NOT use $$ for wide equations
+
+    def test_splice_normal_display_no_resizebox(self, extractor):
+        """Normal-width display equations use standard $$."""
+        equations = [{"idx": 0, "kind": "display", "placeholder": "@@MATH_DISPLAY_0000@@", "xml": ""}]
+        eq_latex = {0: "x + y = z"}
+        md = "Before\n\n@@MATH_DISPLAY_0000@@\n\nAfter"
+        result = extractor._splice(md, eq_latex, equations)
+        assert "$$" in result
+        assert "resizebox" not in result
 
     def test_splice_collapses_excess_blank_lines(self, extractor):
         equations = [{"idx": 0, "kind": "display", "placeholder": "@@MATH_DISPLAY_0000@@", "xml": ""}]
@@ -429,3 +526,8 @@ class TestConfigIntegration:
     def test_math_extractor_exported_from_processors(self):
         from docx2md.processors import MathExtractor
         assert MathExtractor is not None
+
+    def test_frontmatter_defaults_no_equation_numbers(self):
+        """equation_numbers not in defaults — user enables via config/YAML."""
+        from docx2md.processors.frontmatter import _DEFAULT_MDTEXPDF
+        assert "equation_numbers" not in _DEFAULT_MDTEXPDF

@@ -399,7 +399,16 @@ class MathExtractor:
                 continue
 
             if eq["kind"] == "display":
-                replacement = f"\n\n$$\n{latex}\n$$\n\n"
+                if self._is_wide_equation(latex):
+                    # Wrap in resizebox so it scales to fit the page
+                    replacement = (
+                        "\n\n```{=latex}\n"
+                        "\\resizebox{\\linewidth}{!}{$\\displaystyle\n"
+                        f"{latex}\n"
+                        "$}\n```\n\n"
+                    )
+                else:
+                    replacement = f"\n\n$$\n{latex}\n$$\n\n"
             else:
                 replacement = f"${latex}$"
 
@@ -418,10 +427,45 @@ class MathExtractor:
     # ------------------------------------------------------------------
 
     @staticmethod
+    def _is_wide_equation(latex: str) -> bool:
+        """Return True if a display equation is likely to overflow the page.
+
+        Heuristics:
+        - Longest line exceeds the character threshold, OR
+        - Contains multiple matrix environments (pmatrix, bmatrix, etc.)
+        """
+        longest = max((len(line) for line in latex.split("\n")), default=0)
+        if longest > MathExtractor._WIDE_EQ_THRESHOLD:
+            return True
+        # Multiple matrices on one line (e.g. matrix product chains)
+        matrix_count = len(re.findall(
+            r"\\begin\{[pbBvV]?matrix\}", latex
+        ))
+        if matrix_count >= 3:
+            return True
+        return False
+
+    # Regex for equation numbers like #(1.1.46) or #(1.1.13a)
+    # Uses re.MULTILINE so $ matches end-of-line (not just end-of-string),
+    # catching numbers before \end{array} on the next line.
+    _RE_EQ_NUMBER = re.compile(
+        r'[,.\s\\]*'           # optional leading punctuation/space/backslash
+        r'\\?#\('              # literal #( possibly with backslash escape
+        r'[0-9]+(?:\.[0-9]+)*' # dotted number like 1.1.46
+        r'[a-z]?'              # optional letter suffix like 13a
+        r'\)\s*$'              # closing paren at end of line
+        , re.MULTILINE
+    )
+
+    # Threshold (chars) above which a display equation gets \resizebox wrapping
+    _WIDE_EQ_THRESHOLD = 300
+
+    @staticmethod
     def _clean_latex(content: str) -> str:
         """Post-process a single LaTeX equation string.
 
         - Strip trailing ``\\ `` (backslash-space), convergence loop
+        - Strip trailing equation numbers like ``#(1.1.46)``
         - Fix double subscripts: ``}_{`` → ``{}_{``
         - Fix double superscripts: ``}^{`` → ``{}^{``
         """
@@ -430,6 +474,9 @@ class MathExtractor:
         while limit > 0 and content.rstrip().endswith("\\"):
             content = content.rstrip().rstrip("\\").rstrip()
             limit -= 1
+
+        # Strip trailing equation numbers: ,#(1.1.46) or .\#(1.9.3) etc.
+        content = MathExtractor._RE_EQ_NUMBER.sub("", content)
 
         # Double subscript/superscript fix
         content = content.replace("}_{", "}{}_{")

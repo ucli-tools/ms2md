@@ -10,7 +10,8 @@ help: ## Show this help message
 
 build: ## Install docx2md (uv tool install → ~/.local/bin)
 	@echo "Installing docx2md..."
-	uv tool install --from . docx2md --force
+	uv cache clean docx2md 2>/dev/null || true
+	uv tool install --from . docx2md --force --reinstall
 	@echo ""
 	@echo "Installed. Verify with: docx2md --version"
 
